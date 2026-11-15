@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CHIRON+ · Astronaut Health Dashboard (DEMO)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+
+  <!-- ======================= SIDEBAR ======================= -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="logo"><span class="chiron">CHIRON</span><span class="plus">+</span><small>By: Atenea - IPISA</small></div>
+      <div class="topline"></div>
+      <div class="hd">Health Dashboard</div>
+    </div>
+
+    <div class="side-pills">
+      <div class="pill" id="statusPill">
+        <div class="ic ok" id="statusIc">
+          <svg id="statusSvg" width="30" height="30" viewBox="0 0 30 30" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 16l5.5 6L24 8"/></svg>
+        </div>
+        <div><div class="t">General Status</div><div class="s" id="statusSub">Everything under<br>control</div></div>
+      </div>
+
+      <div class="pill" id="alertsPill">
+        <div class="ic">
+          <svg class="siren" id="siren" width="36" height="36" viewBox="0 0 36 36" fill="none" stroke="#111" stroke-width="1.6" stroke-linecap="round">
+            <g class="rays"><path d="M18 3v4M7 8l2.6 2.6M29 8l-2.6 2.6M3 18h4M29 18h4"/></g>
+            <path d="M10 26v-7a8 8 0 0 1 16 0v7"/><path d="M14 19a4 4 0 0 1 4-4"/>
+            <rect x="6" y="26" width="24" height="5" rx="1.5"/>
+          </svg>
+        </div>
+        <span class="badge" id="alertBadge">0</span>
+        <div><div class="t">Active Alerts</div><div class="s" id="alertsSub">Deploy to see more</div></div>
+        <svg class="chev" width="18" height="22" viewBox="0 0 18 22" fill="none" stroke="#555" stroke-width="1.5"><path d="M5 3l8 8-8 8"/></svg>
+      </div>
+
+      <div class="pill" id="helpPill">
+        <div class="ic">
+          <svg width="28" height="28" viewBox="0 0 28 28" stroke="#111" stroke-width="3.4" stroke-linecap="round"><path d="M14 4v20M4 14h20"/></svg>
+        </div>
+        <div><div class="t">Help Button</div><div class="s">Consult any doubt</div></div>
+      </div>
+    </div>
+    <div class="alerts-panel" id="alertsPanel"><ul id="alertsList"></ul></div>
+
+    <div class="chat" id="chat">
+      <div class="chat-head">
+        <div class="bot" id="botIc">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"><path d="M14 4v9"/><path d="M8.5 7.5a9 9 0 1 0 11 0"/></svg>
+        </div>
+        <span>AI MED-BOT</span>
+        <button class="chat-close" id="chatClose" aria-label="Close chat">×</button>
+      </div>
+      <div class="msgs" id="msgs"></div>
+      <form class="chat-input" id="chatForm" autocomplete="off">
+        <input id="chatText" placeholder="Text Here">
+        <button type="button" class="mic" id="micBtn" title="Voice (demo)">
+          <svg width="18" height="20" viewBox="0 0 18 20" fill="none" stroke="#111" stroke-width="1.5" stroke-linecap="round"><rect x="6" y="1" width="6" height="11" rx="3"/><path d="M3 9a6 6 0 0 0 12 0M9 15v4M6 19h6"/></svg>
+        </button>
+        <button type="submit" title="Send"><svg width="18" height="20" viewBox="0 0 18 20"><path d="M2 1.5l15 8.5-15 8.5z" fill="#2233d9"/></svg></button>
+      </form>
+    </div>
+  </aside>
+
+  <!-- ======================= MAIN ======================= -->
+  <main class="main" id="main">
+    <header class="mission">
+      <h1>DEMO PROTOTYPE CREATED WITH GEMINI ANTIGRAVITY</h1>
+      <div class="astro">
+        <div class="avatar">JP</div>
+        <div><b id="astroName">Cmdr. Juan Payamps</b><span class="sep">·</span>Mission <b>CHIRON-1</b><span class="sep">·</span>Lunar Gateway</div>
+      </div>
+      <div class="met"><span>MD <b id="mdNum">142</b>/180</span><span class="sep">·</span><span>MET <b id="metClock">--</b></span><span class="sep">·</span><span><span class="live-dot"></span> LIVE DEMO · <span id="lastUpd">--:--:--</span></span></div>
+    </header>
+
+    <nav class="tabs" id="tabs">
+      <button class="tab active" data-view="vital">Vital Signs<i class="tdot" id="td-vital"></i></button>
+      <button class="tab" data-view="trends">Tendencies<i class="tdot" id="td-trends"></i></button>
+      <button class="tab" data-view="anatomy">Anatomy<i class="tdot" id="td-anatomy"></i></button>
+      <button class="tab" data-view="radiation">Radiation<i class="tdot" id="td-radiation"></i></button>
+    </nav>
+
+    <!-- ===================== VITAL SIGNS ===================== -->
+    <section class="view active" id="view-vital">
+      <div class="card alertable" id="c-hr" style="--tint:#f6c9cf">
+        <div class="card-top">
+          <div class="ibox" id="hrBox" style="background:linear-gradient(160deg,#5a0000,#3a0000)">
+            <svg width="56" height="40" viewBox="0 0 56 40" fill="none" stroke="#fff" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"><path d="M2 22h14l3-6 4 14 5-26 4 22 3-4h19"/></svg>
+          </div>
+          <h3>Heart Rate</h3>
+        </div>
+        <div class="val" style="color:#7a0b0b">BPM: <span id="hr">75</span></div>
+        <canvas id="ecg"></canvas>
+      </div>
+
+      <div class="card alertable" id="c-temp" style="--tint:#e9cde6">
+        <div class="card-top">
+          <div class="ibox" style="background:linear-gradient(160deg,#c2186a,#9c0f52)">
+            <svg width="40" height="64" viewBox="0 0 40 64" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round">
+              <path d="M14 40V9a6 6 0 0 1 12 0v31a10 10 0 1 1-12 0z"/>
+              <circle cx="20" cy="48" r="5" fill="#fff"/><path d="M20 44V22" stroke-width="3.4"/>
+              <path d="M30 12h4M30 18h4M30 24h4M30 30h4" stroke-width="2"/>
+            </svg>
+          </div>
+          <h3>Temperature</h3>
+        </div>
+        <div class="tri" style="color:#c2185b">
+          <div>Now<br><b>°C: <span id="tNow">36.6</span></b></div>
+          <div>Avg.<br><b>°C: <span id="tAvg">36.6</span></b></div>
+          <div>Max.<br><b>°C: <span id="tMax">36.6</span></b></div>
+        </div>
+        <svg id="tchart" viewBox="0 0 170 42" preserveAspectRatio="none">
+          <path d="M8 6H3v30h5M3 21h4" fill="none" stroke="#2a0a33" vector-effect="non-scaling-stroke" style="stroke-width:calc(var(--u)*.8)"/>
+          <path id="tpath" vector-effect="non-scaling-stroke" d="" fill="none" stroke="#3b0a45" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+
+      <div class="card alertable" id="c-spo2" style="--tint:#f6c7cc">
+        <div class="card-top">
+          <div class="ibox" style="background:linear-gradient(160deg,#ff1f1f,#d40d14)">
+            <svg width="64" height="56" viewBox="0 0 64 56" fill="none" stroke="#fff" stroke-width="2.6" style="filter:drop-shadow(0 0 3px rgba(255,255,255,.8))">
+              <path d="M22 4C14 16 8 24 8 32a14 14 0 0 0 28 0c0-8-6-16-14-28z"/>
+              <path d="M15 32a7 7 0 0 0 7 7" stroke-linecap="round"/>
+              <text x="38" y="44" fill="#fff" stroke="none" font-family="Inter,sans-serif" font-weight="700" font-size="17">O</text>
+              <text x="50" y="48" fill="#fff" stroke="none" font-family="Inter,sans-serif" font-weight="700" font-size="10">2</text>
+            </svg>
+          </div>
+          <h3>Peripheral<br>Oxygen<br>Saturation</h3>
+        </div>
+        <div class="tri" style="color:#d32f2f">
+          <div>Now<br><b><span id="sNow">98</span>%</b></div>
+          <div>Avg.<br><b><span id="sAvg">97</span>%</b></div>
+          <div>Min.<br><b><span id="sMin">95</span>%</b></div>
+        </div>
+      </div>
+
+      <div class="card alertable" id="c-glu" style="--tint:#fbd9bd">
+        <div class="card-top">
+          <div class="ibox" style="background:linear-gradient(160deg,#c25510,#a8420a)">
+            <svg width="56" height="60" viewBox="0 0 56 60" fill="none" stroke="#fff" stroke-width="2.4" stroke-linejoin="round">
+              <path d="M22 4C14 17 8 25 8 33a14 14 0 0 0 22 11.5"/><path d="M22 4c6 9 11 16 13 22"/>
+              <path d="M15 33a7 7 0 0 0 5 6.7" stroke-linecap="round"/><circle cx="40" cy="42" r="11"/>
+              <path d="M40 35l6 3.4v7L40 49l-6-3.6v-7zM34 38.4l6 3.4 6-3.4M40 41.8V49" stroke-width="1.6"/>
+            </svg>
+          </div>
+          <h3>Glucose</h3>
+        </div>
+        <div class="val" style="color:#8a2c00">Level: <span id="glu">92</span> mg/dL</div>
+      </div>
+
+      <div class="card alertable" id="c-bp" style="--tint:#e2c8ef">
+        <div class="card-top">
+          <div class="ibox" style="background:linear-gradient(160deg,#7d128f,#5c0a6d)">
+            <svg width="66" height="56" viewBox="0 0 66 56" fill="none" stroke="#fff" stroke-width="2.4" stroke-linejoin="round">
+              <path d="M30 50C14 38 4 30 4 18A11 11 0 0 1 24 11a11 11 0 0 1 9-4"/><path d="M30 50c2-1.4 4-3 5.8-4.4"/>
+              <circle cx="44" cy="28" r="14"/><circle cx="44" cy="28" r="10" stroke-width="1.4"/>
+              <path d="M44 28l5-6" stroke-linecap="round"/><circle cx="44" cy="28" r="1.8" fill="#fff"/>
+              <path d="M44 42v6a4 4 0 0 1-4 4" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <h3>Blood<br>Presure</h3>
+        </div>
+        <div class="mono bp1" style="color:#4a0e5c"><span id="bp">120/80</span> mmHg</div>
+        <div class="mono bp2" style="color:#4a0e5c">SYS: <span id="sys">120</span><span style="border-left:2px solid #4a0e5c;margin:0 4px"></span>DIA: <span id="dia">80</span></div>
+      </div>
+
+      <div class="card alertable" id="c-vo2" style="--tint:#c5cde0">
+        <div class="card-top">
+          <div class="ibox" style="background:linear-gradient(160deg,#284a86,#1a3466)">
+            <svg width="60" height="60" viewBox="0 0 60 60" fill="none" stroke="#fff" stroke-width="2.2">
+              <path d="M24 4C15 18 9 26 9 35a15 15 0 0 0 25 11"/><path d="M24 4c6 9 11 17 13.5 24"/>
+              <path d="M16 35a8 8 0 0 0 6 7.7" stroke-linecap="round"/>
+              <text x="33" y="52" fill="#fff" stroke="none" font-family="Inter,sans-serif" font-weight="300" font-size="18">O</text>
+              <text x="46" y="56" fill="#fff" stroke="none" font-family="Inter,sans-serif" font-weight="300" font-size="12">2</text>
+            </svg>
+          </div>
+          <h3>Oxygen</h3>
+        </div>
+        <div class="val" style="color:#1a2a55">VO2 Max: <span id="vo2">45</span> ml</div>
+      </div>
+    </section>
+
+    <!-- ===================== TENDENCIES ===================== -->
+    <section class="view" id="view-trends">
+      <div class="rhead">
+        <div><h2><b>Trends</b> · Vital sign history</h2><div class="sub">Wearable biosensors · last 24 hours, 7 days and the full mission</div></div>
+        <div class="seg" id="rangeSeg"><button data-r="24h" class="on">Last 24 h</button><button data-r="7d">7 days</button><button data-r="mission">Full mission</button></div>
+      </div>
+      <div class="rgrid">
+        <div class="panel s8" style="--tint:#f8eef4">
+          <div class="ptitle">
+            <div class="pi" id="trendIcon" style="background:#b71c1c"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l5-6 4 4 8-9"/><path d="M15 6h5v5"/></svg></div>
+            <div><h3 id="trendTitle">Heart rate</h3><small id="trendSub">Last 24 h · 15-min resolution</small></div>
+          </div>
+          <div class="chips" id="metricChips"></div>
+          <div class="chart h300" id="trendChart"></div>
+          <div class="kpis mt" id="trendKpis"></div>
+        </div>
+        <div class="panel s4">
+          <div class="ptitle">
+            <div class="pi" style="background:#111"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg></div>
+            <div><h3>Range summary</h3><small id="sumSub">Last 24 h</small></div>
+          </div>
+          <div class="tbl-wrap"><table class="tbl" id="trendTable"></table></div>
+          <div class="reco mt" style="padding:12px">
+            <div class="ri" style="width:30px;height:30px;flex-basis:30px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"><path d="M12 8v5M12 17h.01"/><circle cx="12" cy="12" r="10"/></svg></div>
+            <p style="font-size:12.5px" id="trendInsight"></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="rhead">
+        <div><h2><b>Sleep</b> & circadian rhythm</h2><div class="sub">Actigraphy + core body temperature · last night and 7-night trend</div></div>
+      </div>
+      <div class="rgrid">
+        <div class="panel s12"><div class="kpis" id="sleepKpis"></div></div>
+        <div class="panel s7" style="--tint:#eef0fb">
+          <div class="ptitle">
+            <div class="pi" style="background:#1a237e"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></div>
+            <div><h3>Last night · Hypnogram</h3><small id="hypSub">Sleep stages</small></div>
+          </div>
+          <div class="chart h200" id="hypnoChart"></div>
+          <div class="legend"><span><i style="background:#f5a300"></i>Awake</span><span><i style="background:#8e5cd9"></i>REM</span><span><i style="background:#6ab0f3"></i>Light</span><span><i style="background:#1a237e"></i>Deep</span></div>
+        </div>
+        <div class="panel s5" style="--tint:#eef0fb">
+          <div class="ptitle">
+            <div class="pi" style="background:#3949ab"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M6 20V10M12 20V4M18 20v-7"/></svg></div>
+            <div><h3>Sleep duration · last 7 nights</h3><small>Hours per night vs 8 h target</small></div>
+          </div>
+          <div class="chart h200" id="sleepBars"></div>
+          <div class="legend"><span><i style="background:#1a237e"></i>Deep</span><span><i style="background:#8e5cd9"></i>REM</span><span><i style="background:#6ab0f3"></i>Light</span><span><i style="background:#f5a300"></i>Awake</span></div>
+        </div>
+        <div class="panel s7" style="--tint:#f8eef4">
+          <div class="ptitle">
+            <div class="pi" style="background:#c2185b"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
+            <div><h3>Circadian rhythm</h3><small>Core body temperature · last 24 h (sleep window shaded)</small></div>
+          </div>
+          <div class="chart h200" id="circChart"></div>
+          <div class="kpis mt" id="circKpis"></div>
+        </div>
+        <div class="panel s5">
+          <div class="ptitle">
+            <div class="pi" style="background:#2233d9"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V16h8v-1.3A7 7 0 0 0 12 2z"/></svg></div>
+            <div><h3>Recommendation</h3><small>Generated from last 7 nights · AI MED-BOT</small></div>
+          </div>
+          <div class="reco"><div class="ri"><svg width="18" height="18" viewBox="0 0 28 28" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"><path d="M14 4v9"/><path d="M8.5 7.5a9 9 0 1 0 11 0"/></svg></div>
+            <div><h4>For tonight</h4><p id="sleepReco"></p></div></div>
+          <ul class="steps" id="sleepSteps"></ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== ANATOMY ===================== -->
+    <section class="view" id="view-anatomy">
+      <div class="rhead">
+        <div><h2><b>Exercise</b>, muscles & bones</h2><div class="sub">Countermeasure plan compliance and accumulated musculoskeletal load</div></div>
+      </div>
+      <div class="rgrid">
+        <div class="panel s4" style="--tint:#e9f7ec">
+          <div class="ptitle">
+            <div class="pi" style="background:#1b7a33"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></div>
+            <div><h3>Plan compliance</h3><small>This week · mission to date</small></div>
+          </div>
+          <div class="ring-wrap" id="compliance"></div>
+          <div class="session" id="session"></div>
+        </div>
+        <div class="panel s8">
+          <div class="ptitle">
+            <div class="pi" style="background:#111"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></div>
+            <div><h3>Weekly exercise plan</h3><small>ARED resistance · T2 treadmill · CEVIS cycle ergometer</small></div>
+          </div>
+          <div class="wk" id="weekGrid"></div>
+          <div class="legend"><span><i style="background:#1fb83a"></i>Completed</span><span><i style="background:#d7f3dd;box-shadow:inset 0 0 0 2px #1fb83a"></i>In progress</span><span><i style="background:#fde3e3"></i>Missed</span><span><i style="background:#f6f6fa;box-shadow:inset 0 0 0 1px #cfcfdc"></i>Planned</span></div>
+        </div>
+        <div class="panel s7" style="--tint:#f3eaf7">
+          <div class="ptitle">
+            <div class="pi" style="background:#6a1b9a"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><path d="M2 12h3M19 12h3M5 8v8M19 8v8M8 6v12M16 6v12M8 12h8"/></svg></div>
+            <div><h3>Accumulated load</h3><small>ARED weekly lifted volume (tonnes) · last 12 weeks</small></div>
+          </div>
+          <div class="chart h220" id="loadChart"></div>
+          <div class="kpis mt" id="loadKpis"></div>
+        </div>
+        <div class="panel s5" style="--tint:#f3eaf7">
+          <div class="ptitle">
+            <div class="pi" style="background:#8e24aa"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="4" r="2"/><path d="M12 7v7M8 22l4-8 4 8M6 10h12"/></svg></div>
+            <div><h3>Muscles & bones status</h3><small>Change vs pre-flight baseline · muscle load map this week</small></div>
+          </div>
+          <div class="msk"><div id="bodyMap"></div><div class="msk-list" id="mskList"></div></div>
+        </div>
+      </div>
+
+      <div class="rhead">
+        <div><h2><b>Balance</b> · Vestibular system</h2><div class="sub">Vestibular test results and dizziness log</div></div>
+      </div>
+      <div class="rgrid">
+        <div class="panel s7" style="--tint:#eaf2fb">
+          <div class="ptitle">
+            <div class="pi" style="background:#1565c0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M12 3v18M5 8l7-5 7 5M3 14l4-4 4 4M13 14l4-4 4 4"/></svg></div>
+            <div><h3>Vestibular test results</h3><small>Last session MD 140 · next scheduled MD 147</small></div>
+            <div class="right"><span class="tag warn">3 of 7 below baseline</span></div>
+          </div>
+          <div class="tbl-wrap"><table class="tbl" id="vestTable"></table></div>
+        </div>
+        <div class="panel s5 alertable" id="c-dizzy" style="--tint:#eaf2fb">
+          <div class="ptitle">
+            <div class="pi" style="background:#f5a300"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M12 12m-3 0a3 3 0 1 0 6 0a3 3 0 1 0-6 0M12 12m-7 0a7 7 0 1 0 14 0a7 7 0 1 0-14 0"/></svg></div>
+            <div><h3>Dizziness log</h3><small>Episodes per mission week · recent entries</small></div>
+            <div class="right"><button class="btn" id="logDizzy">+ Log episode</button></div>
+          </div>
+          <div class="chart h120" id="dizzyChart"></div>
+          <ul class="dlog" id="dizzyLog"></ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== RADIATION ===================== -->
+    <section class="view" id="view-radiation">
+      <div class="rhead">
+        <div><h2><b>Radiation</b> exposure</h2><div class="sub">Crew Active Dosimeter · NOAA/SWPC space-weather feed</div></div>
+      </div>
+      <div class="rgrid">
+        <div class="panel s4 keep" style="--tint:#fff3dc">
+          <div class="ptitle">
+            <div class="pi" style="background:#e08a00"><svg width="22" height="22" viewBox="0 0 24 24" fill="#fff"><circle cx="12" cy="12" r="2"/><path d="M10.6 9.6L6.5 2.5A11 11 0 0 1 17.5 2.5L13.4 9.6A3 3 0 0 0 10.6 9.6Z"/><path d="M15 12h8.2a11 11 0 0 1-5.5 9.5l-4.1-7.1A3 3 0 0 0 15 12Z"/><path d="M10.4 14.4l-4.1 7.1A11 11 0 0 1 .8 12H9a3 3 0 0 0 1.4 2.4Z"/></svg></div>
+            <div><h3>Accumulated dose</h3><small>Effective dose vs mission limit</small></div>
+          </div>
+          <div id="doseGauge"></div>
+          <div class="kpis mt" id="doseKpis"></div>
+        </div>
+        <div class="panel s4 keep alertable" id="stormPanel">
+          <div class="ptitle">
+            <div class="pi" style="background:#ff6d00"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></div>
+            <div><h3>Solar storm warning</h3><small>Space weather · updated live</small></div>
+          </div>
+          <div class="storm calm" id="stormBanner"></div>
+          <div class="sw" id="swKpis"></div>
+          <ol class="actions" id="stormActions"></ol>
+        </div>
+        <div class="panel s4 keep alertable" id="doseRatePanel" style="--tint:#fff3dc">
+          <div class="ptitle">
+            <div class="pi" style="background:#111"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg></div>
+            <div><h3>Live dose rate</h3><small>Crew Active Dosimeter (chest)</small></div>
+          </div>
+          <div class="big" id="doseRate">--<small>µSv/h</small></div>
+          <div class="chart h120" id="doseSpark"></div>
+          <div class="kpis mt" id="doseLive"></div>
+        </div>
+        <div class="panel s12">
+          <div class="ptitle">
+            <div class="pi" style="background:#e08a00"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M6 20V10M12 20V4M18 20v-7"/></svg></div>
+            <div><h3>Daily dose · last 30 days</h3><small>mSv/day · solar particle events highlighted</small></div>
+          </div>
+          <div class="chart h200" id="doseDaily"></div>
+          <div class="legend"><span><i style="background:#f0a020"></i>Galactic cosmic rays (GCR)</span><span><i style="background:#e3141b"></i>Solar particle event day</span><span><i style="background:#111"></i>Today (live)</span></div>
+        </div>
+      </div>
+
+      <div class="rhead">
+        <div><h2><b>Cabin</b> environment</h2><div class="sub">ECLSS sensors · these conditions directly affect how the astronaut feels</div></div>
+      </div>
+      <div class="env" id="envGrid"></div>
+    </section>
+  </main>
+</div>
+
+<button class="bot chat-fab" id="chatFab" aria-label="Open AI MED-BOT">
+  <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"><path d="M14 4v9"/><path d="M8.5 7.5a9 9 0 1 0 11 0"/></svg>
+</button>
+<div class="toasts" id="toasts"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
