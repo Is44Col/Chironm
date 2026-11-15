@@ -1,2 +1,2 @@
-# [DEPLOYMENT URL:](https://sage-kataifi-44efd8.netlify.app)
+# [DEPLOYMENT URL](https://sage-kataifi-44efd8.netlify.app)
 
